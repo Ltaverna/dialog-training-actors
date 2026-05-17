@@ -17,6 +17,15 @@ describe('addCharacter', () => {
     addCharacter(script, 'Ofelia');
     expect(script.characters).toEqual([]);
   });
+
+  it('acumula personajes y asigna ids distintos en llamadas sucesivas', () => {
+    const script = createScript({ title: 'T', ownerUid: 'u' });
+    const [afterFirst, first] = addCharacter(script, 'Hamlet');
+    const [afterSecond, second] = addCharacter(afterFirst, 'Ofelia');
+
+    expect(first.id).not.toBe(second.id);
+    expect(afterSecond.characters).toEqual([first, second]);
+  });
 });
 
 describe('addScene', () => {
@@ -28,5 +37,11 @@ describe('addScene', () => {
     expect(first.order).toBe(0);
     expect(second.order).toBe(1);
     expect(afterSecond.scenes).toEqual([first, second]);
+  });
+
+  it('no muta el guion original', () => {
+    const script = createScript({ title: 'T', ownerUid: 'u' });
+    addScene(script, 'Acto I');
+    expect(script.scenes).toEqual([]);
   });
 });
