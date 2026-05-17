@@ -40,6 +40,9 @@ export interface AddLineParams {
  * Devuelve un nuevo guion con la línea agregada al final de su escena (su
  * `order` es la cantidad de líneas previas en esa escena), junto con la línea
  * creada. No muta el guion original.
+ *
+ * No valida que `params.sceneId` exista en el guion; la integridad
+ * referencial es responsabilidad de `validateScript`.
  */
 export function addLine(script: Script, params: AddLineParams): [Script, Line] {
   const order = script.lines.filter((l) => l.sceneId === params.sceneId).length;

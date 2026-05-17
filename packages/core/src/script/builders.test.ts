@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createScript } from './createScript';
-import { addCharacter, addScene } from './builders';
-import { addLine } from './builders';
+import { addCharacter, addScene, addLine } from './builders';
 
 describe('addCharacter', () => {
   it('agrega un personaje con id único y devuelve el personaje creado', () => {
@@ -49,7 +48,7 @@ describe('addScene', () => {
 
 describe('addLine', () => {
   it('agrega una línea de diálogo con order incremental dentro de la escena', () => {
-    let script = createScript({ title: 'T', ownerUid: 'u' });
+    const script = createScript({ title: 'T', ownerUid: 'u' });
     const [s1, scene] = addScene(script, 'Acto I');
     const [s2, character] = addCharacter(s1, 'Hamlet');
 
@@ -73,7 +72,7 @@ describe('addLine', () => {
   });
 
   it('numera el order de cada escena por separado', () => {
-    let script = createScript({ title: 'T', ownerUid: 'u' });
+    const script = createScript({ title: 'T', ownerUid: 'u' });
     const [s1, sceneA] = addScene(script, 'Acto I');
     const [s2, sceneB] = addScene(s1, 'Acto II');
 
