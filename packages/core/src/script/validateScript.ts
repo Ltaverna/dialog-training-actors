@@ -1,4 +1,4 @@
-import type { LineId, Script } from './types';
+import type { LineId, SceneId, Script } from './types';
 
 export interface ValidationError {
   lineId: LineId;
@@ -21,7 +21,7 @@ export interface ValidationResult {
 export function validateScript(script: Script): ValidationResult {
   const characterIds = new Set(script.characters.map((c) => c.id));
   const sceneIds = new Set(script.scenes.map((s) => s.id));
-  const seenOrderBySceneId = new Map<string, Set<number>>();
+  const seenOrderBySceneId = new Map<SceneId, Set<number>>();
   const errors: ValidationError[] = [];
 
   for (const line of script.lines) {

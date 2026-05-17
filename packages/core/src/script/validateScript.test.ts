@@ -25,6 +25,12 @@ describe('validateScript', () => {
     expect(result.errors).toEqual([]);
   });
 
+  it('marca como válido un guion sin líneas', () => {
+    const result = validateScript(baseScript());
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
   it('reporta una línea de diálogo sin personaje', () => {
     const script = baseScript();
     script.lines = [
@@ -86,6 +92,21 @@ describe('validateScript', () => {
     ]);
   });
 
+  it('no reporta error cuando dos escenas distintas usan el mismo order', () => {
+    const script = baseScript();
+    script.scenes = [
+      { id: 'sc1', title: 'Acto I', order: 0 },
+      { id: 'sc2', title: 'Acto II', order: 1 },
+    ];
+    script.lines = [
+      { id: 'l1', sceneId: 'sc1', order: 0, characterId: 'c1', type: 'dialogue', text: 'A.' },
+      { id: 'l2', sceneId: 'sc2', order: 0, characterId: 'c1', type: 'dialogue', text: 'B.' },
+    ];
+    const result = validateScript(script);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
   it('acumula varios errores de distintas líneas', () => {
     const script = baseScript();
     script.lines = [
@@ -94,6 +115,9 @@ describe('validateScript', () => {
     ];
     const result = validateScript(script);
     expect(result.valid).toBe(false);
-    expect(result.errors).toHaveLength(2);
+    expect(result.errors).toEqual([
+      { lineId: 'l1', message: 'Una línea de diálogo debe tener un personaje asignado.' },
+      { lineId: 'l2', message: 'La línea referencia una escena que no existe.' },
+    ]);
   });
 });
