@@ -2,7 +2,8 @@ import type { Line, SceneId, Script } from './types';
 
 /**
  * Devuelve las líneas de una escena ordenadas por `order` ascendente.
- * No muta el guion: opera sobre una copia del array de líneas.
+ * No muta `script.lines`: `.filter()` produce un nuevo array y `.sort()` opera
+ * sobre él.
  */
 export function getSceneLines(script: Script, sceneId: SceneId): Line[] {
   return script.lines
