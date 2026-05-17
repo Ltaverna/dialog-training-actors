@@ -1,4 +1,4 @@
-import type { Character, Scene, Script } from './types';
+import type { Character, CharacterId, Line, LineType, Scene, SceneId, Script } from './types';
 import { generateId } from '../ids';
 
 /**
@@ -27,4 +27,29 @@ export function addScene(script: Script, title: string): [Script, Scene] {
     order: script.scenes.length,
   };
   return [{ ...script, scenes: [...script.scenes, scene] }, scene];
+}
+
+export interface AddLineParams {
+  sceneId: SceneId;
+  characterId: CharacterId | null;
+  type: LineType;
+  text: string;
+}
+
+/**
+ * Devuelve un nuevo guion con la línea agregada al final de su escena (su
+ * `order` es la cantidad de líneas previas en esa escena), junto con la línea
+ * creada. No muta el guion original.
+ */
+export function addLine(script: Script, params: AddLineParams): [Script, Line] {
+  const order = script.lines.filter((l) => l.sceneId === params.sceneId).length;
+  const line: Line = {
+    id: generateId(),
+    sceneId: params.sceneId,
+    order,
+    characterId: params.characterId,
+    type: params.type,
+    text: params.text,
+  };
+  return [{ ...script, lines: [...script.lines, line] }, line];
 }

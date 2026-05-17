@@ -12,3 +12,5 @@ export type {
 export { createScript } from './script/createScript';
 export type { CreateScriptParams } from './script/createScript';
 export { addCharacter, addScene } from './script/builders';
+export { addLine } from './script/builders';
+export type { AddLineParams } from './script/builders';

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createScript } from './createScript';
 import { addCharacter, addScene } from './builders';
+import { addLine } from './builders';
 
 describe('addCharacter', () => {
   it('agrega un personaje con id único y devuelve el personaje creado', () => {
@@ -43,5 +44,59 @@ describe('addScene', () => {
     const script = createScript({ title: 'T', ownerUid: 'u' });
     addScene(script, 'Acto I');
     expect(script.scenes).toEqual([]);
+  });
+});
+
+describe('addLine', () => {
+  it('agrega una línea de diálogo con order incremental dentro de la escena', () => {
+    let script = createScript({ title: 'T', ownerUid: 'u' });
+    const [s1, scene] = addScene(script, 'Acto I');
+    const [s2, character] = addCharacter(s1, 'Hamlet');
+
+    const [s3, first] = addLine(s2, {
+      sceneId: scene.id,
+      characterId: character.id,
+      type: 'dialogue',
+      text: 'Ser o no ser.',
+    });
+    const [s4, second] = addLine(s3, {
+      sceneId: scene.id,
+      characterId: character.id,
+      type: 'dialogue',
+      text: 'Esa es la cuestión.',
+    });
+
+    expect(first.order).toBe(0);
+    expect(second.order).toBe(1);
+    expect(first.text).toBe('Ser o no ser.');
+    expect(s4.lines).toEqual([first, second]);
+  });
+
+  it('numera el order de cada escena por separado', () => {
+    let script = createScript({ title: 'T', ownerUid: 'u' });
+    const [s1, sceneA] = addScene(script, 'Acto I');
+    const [s2, sceneB] = addScene(s1, 'Acto II');
+
+    const [s3, lineA] = addLine(s2, {
+      sceneId: sceneA.id,
+      characterId: null,
+      type: 'direction',
+      text: 'Entra el rey.',
+    });
+    const [, lineB] = addLine(s3, {
+      sceneId: sceneB.id,
+      characterId: null,
+      type: 'direction',
+      text: 'Sale el rey.',
+    });
+
+    expect(lineA.order).toBe(0);
+    expect(lineB.order).toBe(0);
+  });
+
+  it('no muta el guion original', () => {
+    const [s1, scene] = addScene(createScript({ title: 'T', ownerUid: 'u' }), 'Acto I');
+    addLine(s1, { sceneId: scene.id, characterId: null, type: 'direction', text: 'x' });
+    expect(s1.lines).toEqual([]);
   });
 });
