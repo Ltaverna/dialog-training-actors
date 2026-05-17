@@ -480,6 +480,7 @@ Crear `packages/core/src/script/builders.ts`:
 
 ```ts
 import type { Character, Scene, Script } from './types';
+import { generateId } from '../ids';
 
 /**
  * Devuelve un nuevo guion con el personaje agregado, junto con el personaje
@@ -489,7 +490,7 @@ export function addCharacter(
   script: Script,
   name: string,
 ): [Script, Character] {
-  const character: Character = { id: crypto.randomUUID(), name };
+  const character: Character = { id: generateId(), name };
   return [
     { ...script, characters: [...script.characters, character] },
     character,
@@ -502,13 +503,15 @@ export function addCharacter(
  */
 export function addScene(script: Script, title: string): [Script, Scene] {
   const scene: Scene = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     title,
     order: script.scenes.length,
   };
   return [{ ...script, scenes: [...script.scenes, scene] }, scene];
 }
 ```
+
+Nota: `generateId()` vive en `packages/core/src/ids.ts` (creado durante los fixes de revisión de la Task 3). Encapsula `crypto.randomUUID()` con una declaración acotada del global `crypto`, para no depender de la lib `DOM`.
 
 - [ ] **Step 4: Exportar la nueva API pública**
 
@@ -628,7 +631,7 @@ export interface AddLineParams {
 export function addLine(script: Script, params: AddLineParams): [Script, Line] {
   const order = script.lines.filter((l) => l.sceneId === params.sceneId).length;
   const line: Line = {
-    id: crypto.randomUUID(),
+    id: generateId(),
     sceneId: params.sceneId,
     order,
     characterId: params.characterId,
@@ -646,8 +649,8 @@ Nota: el `import type` de `Character, Scene, Script` ya existe en la cabecera de
 Agregar al final de `packages/core/src/index.ts`:
 
 ```ts
-export { addLine } from './builders';
-export type { AddLineParams } from './builders';
+export { addLine } from './script/builders';
+export type { AddLineParams } from './script/builders';
 ```
 
 - [ ] **Step 5: Correr el test para verificar que pasa**
@@ -747,7 +750,7 @@ export function getSceneLines(script: Script, sceneId: SceneId): Line[] {
 Agregar al final de `packages/core/src/index.ts`:
 
 ```ts
-export { getSceneLines } from './selectors';
+export { getSceneLines } from './script/selectors';
 ```
 
 - [ ] **Step 5: Correr el test para verificar que pasa**
@@ -964,8 +967,8 @@ export function validateScript(script: Script): ValidationResult {
 Agregar al final de `packages/core/src/index.ts`:
 
 ```ts
-export { validateScript } from './validateScript';
-export type { ValidationError, ValidationResult } from './validateScript';
+export { validateScript } from './script/validateScript';
+export type { ValidationError, ValidationResult } from './script/validateScript';
 ```
 
 - [ ] **Step 5: Correr el test para verificar que pasa**
