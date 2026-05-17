@@ -15,6 +15,6 @@ describe('createScript', () => {
     const a = createScript({ title: 'A', ownerUid: 'u' });
     const b = createScript({ title: 'B', ownerUid: 'u' });
     expect(a.id).not.toBe(b.id);
-    expect(a.id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(a.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   });
 });

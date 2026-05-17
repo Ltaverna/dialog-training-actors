@@ -1,6 +1,7 @@
 export type CharacterId = string;
 export type SceneId = string;
 export type LineId = string;
+export type ScriptId = string;
 
 /** Un personaje del guion. */
 export interface Character {
@@ -33,7 +34,7 @@ export interface Line {
 
 /** El guion canónico. Todos los métodos de importación convergen a esta forma. */
 export interface Script {
-  id: string;
+  id: ScriptId;
   title: string;
   ownerUid: string;
   characters: Character[];
