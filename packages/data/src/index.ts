@@ -11,9 +11,6 @@ export {
   signOutCurrentUser,
   sendPasswordReset,
   observeAuthState,
-} from './auth/authService';
-
-export {
   signInWithGooglePopup,
   signInWithApplePopup,
   signInWithGoogleIdToken,
