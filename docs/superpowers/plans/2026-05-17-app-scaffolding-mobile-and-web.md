@@ -412,7 +412,7 @@ const monorepoRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-config.watchFolders = [monorepoRoot];
+config.watchFolders = [...(config.watchFolders ?? []), monorepoRoot];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(monorepoRoot, 'node_modules'),
@@ -456,14 +456,20 @@ git commit -m "feat(mobile): scaffold Expo app consuming @dialog/core"
 
 - [ ] **Step 1: Agregar las dependencias de testing y el script `test`**
 
-Editar `apps/mobile/package.json`. Agregar a `devDependencies`:
+Editar `apps/mobile/package.json`. Agregar a `devDependencies` (versiones para
+Expo SDK 54 / React 19, que es lo que instaló el generador en la Task 4):
 
 ```json
     "jest": "^29.7.0",
-    "jest-expo": "~52.0.0",
-    "react-test-renderer": "18.3.1",
-    "@testing-library/react-native": "^12.9.0"
+    "jest-expo": "~54.0.0",
+    "react-test-renderer": "19.1.0",
+    "@testing-library/react-native": "^13.2.0"
 ```
+
+`react-test-renderer` DEBE coincidir exactamente con la versión de `react`
+instalada (`19.1.0`). Si `pnpm install` reporta un conflicto de peer deps,
+ajustar las versiones a las que recomiende `npx expo install --check` dentro
+de `apps/mobile`.
 
 Agregar al bloque `scripts` la línea:
 
@@ -490,6 +496,7 @@ module.exports = {
 Crear `apps/mobile/src/demo/demoScript.test.ts`:
 
 ```ts
+import { describe, it, expect } from '@jest/globals';
 import { validateScript, getSceneLines } from '@dialog/core';
 import { buildDemoScript } from './demoScript';
 
@@ -566,6 +573,7 @@ Expected: PASS — el test de `buildDemoScript` pasa.
 Crear `apps/mobile/App.test.tsx`:
 
 ```tsx
+import { describe, it, expect } from '@jest/globals';
 import { render, screen } from '@testing-library/react-native';
 import App from './App';
 
