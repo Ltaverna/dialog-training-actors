@@ -5,6 +5,10 @@ import {
   sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  signInWithCredential,
   type Auth,
   type User,
   type Unsubscribe,
@@ -57,4 +61,47 @@ export function observeAuthState(
   callback: (user: User | null) => void,
 ): Unsubscribe {
   return onAuthStateChanged(auth, callback);
+}
+
+/** Web: inicia sesión con Google mediante un popup. Devuelve el usuario. */
+export async function signInWithGooglePopup(auth: Auth): Promise<User> {
+  const result = await signInWithPopup(auth, new GoogleAuthProvider());
+  return result.user;
+}
+
+/** Web: inicia sesión con Apple mediante un popup. Devuelve el usuario. */
+export async function signInWithApplePopup(auth: Auth): Promise<User> {
+  const result = await signInWithPopup(auth, new OAuthProvider('apple.com'));
+  return result.user;
+}
+
+/**
+ * Móvil: inicia sesión con un `idToken` de Google obtenido por el flujo
+ * nativo de la app (ej. `expo-auth-session`). Devuelve el usuario.
+ */
+export async function signInWithGoogleIdToken(
+  auth: Auth,
+  idToken: string,
+): Promise<User> {
+  const credential = GoogleAuthProvider.credential(idToken);
+  const result = await signInWithCredential(auth, credential);
+  return result.user;
+}
+
+/**
+ * Móvil: inicia sesión con la credencial de Apple obtenida por el flujo
+ * nativo de la app (ej. `expo-apple-authentication`). `rawNonce` es el nonce
+ * sin hashear usado al pedir la credencial. Devuelve el usuario.
+ */
+export async function signInWithAppleIdToken(
+  auth: Auth,
+  params: { idToken: string; rawNonce: string },
+): Promise<User> {
+  const provider = new OAuthProvider('apple.com');
+  const credential = provider.credential({
+    idToken: params.idToken,
+    rawNonce: params.rawNonce,
+  });
+  const result = await signInWithCredential(auth, credential);
+  return result.user;
 }

@@ -12,3 +12,10 @@ export {
   sendPasswordReset,
   observeAuthState,
 } from './auth/authService';
+
+export {
+  signInWithGooglePopup,
+  signInWithApplePopup,
+  signInWithGoogleIdToken,
+  signInWithAppleIdToken,
+} from './auth/authService';
