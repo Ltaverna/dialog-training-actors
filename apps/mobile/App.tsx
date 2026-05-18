@@ -14,6 +14,9 @@ export default function App() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{script.title}</Text>
         <Text style={styles.scene}>{scene.title}</Text>
+        {/* Layout de demostración: para líneas largas, el texto envuelto no
+            queda indentado bajo el inicio de la línea. Se reemplaza al
+            construir las pantallas reales. */}
         {lines.map((line) => (
           <View key={line.id} style={styles.lineRow}>
             <Text style={styles.character}>

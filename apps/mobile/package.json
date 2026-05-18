@@ -18,6 +18,7 @@
     "react-native": "0.81.5"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@testing-library/react-native": "^13.2.0",
     "@types/react": "~19.1.0",
     "jest": "^29.7.0",

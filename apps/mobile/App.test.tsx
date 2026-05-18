@@ -7,6 +7,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByText('Escena de práctica')).toBeTruthy();
+    expect(screen.getByText('Acto I')).toBeTruthy();
     expect(
       screen.getByText('Ser o no ser, esa es la cuestión.'),
     ).toBeTruthy();
