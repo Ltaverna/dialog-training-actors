@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import type { User } from 'firebase/auth';
 import { initFirebase, type FirebaseServices } from '../firebase';
 import {
@@ -26,18 +26,19 @@ beforeAll(() => {
   });
 });
 
+afterEach(async () => {
+  await signOutCurrentUser(services.auth);
+});
+
 function uniqueEmail(): string {
   return `actor-${crypto.randomUUID()}@example.com`;
 }
 
 describe('signUpWithEmail', () => {
   it('crea un usuario nuevo con el email sin verificar', async () => {
-    const user = await signUpWithEmail(
-      services.auth,
-      uniqueEmail(),
-      'secret123',
-    );
-    expect(user.email).toMatch(/@example\.com$/);
+    const email = uniqueEmail();
+    const user = await signUpWithEmail(services.auth, email, 'secret123');
+    expect(user.email).toBe(email);
     expect(user.emailVerified).toBe(false);
   });
 
@@ -91,12 +92,14 @@ describe('observeAuthState', () => {
   it('notifica el usuario actual al suscribirse', async () => {
     const email = uniqueEmail();
     await signUpWithEmail(services.auth, email, 'secret123');
-    const user = await new Promise<User | null>((resolve) => {
+    const user = await new Promise<User>((resolve) => {
       const unsubscribe = observeAuthState(services.auth, (u) => {
-        unsubscribe();
-        resolve(u);
+        if (u !== null) {
+          unsubscribe();
+          resolve(u);
+        }
       });
     });
-    expect(user?.email).toBe(email);
+    expect(user.email).toBe(email);
   });
 });
