@@ -1,4 +1,4 @@
-import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth';
 import {
   getFirestore,
@@ -14,6 +14,8 @@ export interface FirebaseConfig {
   storageBucket: string;
   messagingSenderId: string;
   appId: string;
+  /** Opcional; presente solo si el proyecto tiene Analytics habilitado. */
+  measurementId?: string;
 }
 
 /** Handles de Firebase listos para usar. */
@@ -42,7 +44,9 @@ export function initFirebase(
   config: FirebaseConfig,
   options: InitFirebaseOptions = {},
 ): FirebaseServices {
-  const app = initializeApp(config);
+  // Reutiliza la app por defecto si ya fue inicializada (evita el error
+  // 'app/duplicate-app' cuando initFirebase se llama más de una vez).
+  const app = getApps().length === 0 ? initializeApp(config) : getApp();
   const auth = getAuth(app);
   const db = getFirestore(app);
 
