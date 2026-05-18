@@ -7,6 +7,7 @@ describe('Home', () => {
     render(<Home />);
 
     expect(screen.getByText('Escena de práctica')).toBeInTheDocument();
+    expect(screen.getByText('Acto I')).toBeInTheDocument();
     expect(
       screen.getByText('Ser o no ser, esa es la cuestión.'),
     ).toBeInTheDocument();
