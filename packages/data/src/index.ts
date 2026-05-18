@@ -1,2 +1,6 @@
-// La API pública se completa en las tareas siguientes.
-export {};
+export { initFirebase } from './firebase';
+export type {
+  FirebaseConfig,
+  FirebaseServices,
+  InitFirebaseOptions,
+} from './firebase';
