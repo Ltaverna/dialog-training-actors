@@ -1,7 +1,7 @@
 import { getSceneLines } from '@dialog/core';
 import { buildDemoScript } from '@/src/demo/demoScript';
 
-export default function Home() {
+export default function Home(): React.JSX.Element {
   const { script, scene } = buildDemoScript();
   const lines = getSceneLines(script, scene.id);
   const characterName = (characterId: string | null): string =>
