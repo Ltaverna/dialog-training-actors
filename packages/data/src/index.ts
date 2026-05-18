@@ -4,3 +4,11 @@ export type {
   FirebaseServices,
   InitFirebaseOptions,
 } from './firebase';
+
+export {
+  signUpWithEmail,
+  signInWithEmail,
+  signOutCurrentUser,
+  sendPasswordReset,
+  observeAuthState,
+} from './auth/authService';
