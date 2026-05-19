@@ -1,16 +1,4 @@
-import {
-  doc,
-  getDoc,
-  setDoc,
-  type Firestore as ModularFirestore,
-} from 'firebase/firestore';
-import type firebase from 'firebase/compat/app';
-
-/**
- * Tipo de Firestore que acepta tanto la API modular como la compat
- * (usada por `@firebase/rules-unit-testing` en los tests).
- */
-export type Firestore = ModularFirestore | firebase.firestore.Firestore;
+import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 
 /** Estado de suscripción del usuario (placeholder hasta la fase de monetización). */
 export interface SubscriptionInfo {
@@ -42,8 +30,7 @@ export async function ensureUserProfile(
   db: Firestore,
   params: EnsureUserProfileParams,
 ): Promise<UserProfile> {
-  const modularDb = db as ModularFirestore;
-  const ref = doc(modularDb, 'users', params.uid);
+  const ref = doc(db, 'users', params.uid);
   const snapshot = await getDoc(ref);
   if (snapshot.exists()) {
     return snapshot.data() as UserProfile;
@@ -64,7 +51,6 @@ export async function getUserProfile(
   db: Firestore,
   uid: string,
 ): Promise<UserProfile | null> {
-  const modularDb = db as ModularFirestore;
-  const snapshot = await getDoc(doc(modularDb, 'users', uid));
+  const snapshot = await getDoc(doc(db, 'users', uid));
   return snapshot.exists() ? (snapshot.data() as UserProfile) : null;
 }

@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import type { RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { createFirestoreTestEnv } from '../testing/firestoreTestEnv';
+import {
+  createFirestoreTestEnv,
+  authedFirestore,
+} from '../testing/firestoreTestEnv';
 import { ensureUserProfile, getUserProfile } from './userRepository';
 
 let env: RulesTestEnvironment;
@@ -17,7 +20,7 @@ beforeEach(async () => {
 
 describe('ensureUserProfile', () => {
   it('crea el perfil cuando no existe', async () => {
-    const db = env.authenticatedContext('user-1').firestore();
+    const db = authedFirestore(env, 'user-1');
     const profile = await ensureUserProfile(db, {
       uid: 'user-1',
       displayName: 'Ofelia',
@@ -31,7 +34,7 @@ describe('ensureUserProfile', () => {
   });
 
   it('no sobrescribe un perfil ya existente', async () => {
-    const db = env.authenticatedContext('user-1').firestore();
+    const db = authedFirestore(env, 'user-1');
     const first = await ensureUserProfile(db, {
       uid: 'user-1',
       displayName: 'Ofelia',
@@ -48,12 +51,12 @@ describe('ensureUserProfile', () => {
 
 describe('getUserProfile', () => {
   it('devuelve null para un uid inexistente', async () => {
-    const db = env.authenticatedContext('user-1').firestore();
+    const db = authedFirestore(env, 'user-1');
     expect(await getUserProfile(db, 'user-1')).toBeNull();
   });
 
   it('devuelve el perfil después de crearlo', async () => {
-    const db = env.authenticatedContext('user-1').firestore();
+    const db = authedFirestore(env, 'user-1');
     await ensureUserProfile(db, {
       uid: 'user-1',
       displayName: 'Ofelia',
