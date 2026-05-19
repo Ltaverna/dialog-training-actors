@@ -7,8 +7,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "test": "firebase emulators:exec --only auth --project demo-dialog-test 'vitest run'",
-    "test:watch": "firebase emulators:exec --only auth --project demo-dialog-test 'vitest'",
+    "test": "firebase emulators:exec --only auth,firestore --project demo-dialog-test 'vitest run'",
+    "test:watch": "firebase emulators:exec --only auth,firestore --project demo-dialog-test 'vitest'",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "firebase": "^11.3.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
     "typescript": "^5.7.0",
     "vitest": "^2.1.8"
   }
