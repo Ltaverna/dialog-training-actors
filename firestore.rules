@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Perfil del usuario: solo lo lee y escribe su propio dueño.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Guiones: accesibles por el dueño y por los uids en `collaborators`.
+    match /scripts/{scriptId} {
+      function canAccess(data) {
+        return signedIn() &&
+          (data.ownerUid == request.auth.uid ||
+           request.auth.uid in data.collaborators);
+      }
+
+      allow read: if canAccess(resource.data);
+      allow create: if signedIn() &&
+        request.resource.data.ownerUid == request.auth.uid;
+      allow update: if canAccess(resource.data) &&
+        request.resource.data.ownerUid == resource.data.ownerUid;
+      allow delete: if signedIn() &&
+        resource.data.ownerUid == request.auth.uid;
+
+      // Líneas del guion: mismo permiso que el guion padre.
+      match /lines/{lineId} {
+        function parentScript() {
+          return get(
+            /databases/$(database)/documents/scripts/$(scriptId)
+          ).data;
+        }
+        allow read, write: if signedIn() &&
+          (parentScript().ownerUid == request.auth.uid ||
+           request.auth.uid in parentScript().collaborators);
+      }
+    }
+  }
+}
