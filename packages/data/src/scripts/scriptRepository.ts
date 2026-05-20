@@ -30,6 +30,10 @@ export interface ScriptSummary {
  * en Firestore). Como el reemplazo combina deletes + sets, el techo real es
  * ~250 líneas por guion. Guiones más grandes requerirán dividir el batch
  * (mejora futura).
+ *
+ * No es seguro para escrituras concurrentes: dos llamadas simultáneas sobre el
+ * mismo guion pueden pisarse (la lectura de `createdAt` / `collaborators` no
+ * está en transacción). En v1 se asume un único cliente activo por guion.
  */
 export async function saveScript(db: Firestore, script: Script): Promise<void> {
   const scriptRef = doc(db, 'scripts', script.id);
