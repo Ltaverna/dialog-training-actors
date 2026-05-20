@@ -16,3 +16,18 @@ export {
   signInWithGoogleIdToken,
   signInWithAppleIdToken,
 } from './auth/authService';
+
+export { ensureUserProfile, getUserProfile } from './user/userRepository';
+export type {
+  UserProfile,
+  SubscriptionInfo,
+  EnsureUserProfileParams,
+} from './user/userRepository';
+
+export {
+  saveScript,
+  getScript,
+  listScripts,
+  deleteScript,
+} from './scripts/scriptRepository';
+export type { ScriptSummary } from './scripts/scriptRepository';
