@@ -70,27 +70,28 @@ service cloud.firestore {
       function canAccess(data) {
         return signedIn() &&
           (data.ownerUid == request.auth.uid ||
-           request.auth.uid in data.collaborators);
+           request.auth.uid in data.get('collaborators', []));
       }
 
       allow read: if canAccess(resource.data);
+      // Al crear, `collaborators` debe ir vacío: un usuario no puede otorgar
+      // acceso a otro sin su consentimiento.
       allow create: if signedIn() &&
-        request.resource.data.ownerUid == request.auth.uid;
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.collaborators == [];
+      // Solo el dueño puede modificar la lista de `collaborators`.
       allow update: if canAccess(resource.data) &&
-        request.resource.data.ownerUid == resource.data.ownerUid;
+        request.resource.data.ownerUid == resource.data.ownerUid &&
+        (request.resource.data.collaborators == resource.data.collaborators ||
+         resource.data.ownerUid == request.auth.uid);
       allow delete: if signedIn() &&
         resource.data.ownerUid == request.auth.uid;
 
-      // Líneas del guion: mismo permiso que el guion padre.
+      // Líneas del guion: mismo permiso que el guion padre (un solo `get`).
       match /lines/{lineId} {
-        function parentScript() {
-          return get(
-            /databases/$(database)/documents/scripts/$(scriptId)
-          ).data;
-        }
-        allow read, write: if signedIn() &&
-          (parentScript().ownerUid == request.auth.uid ||
-           request.auth.uid in parentScript().collaborators);
+        allow read, write: if canAccess(
+          get(/databases/$(database)/documents/scripts/$(scriptId)).data
+        );
       }
     }
   }
@@ -794,6 +795,17 @@ describe('reglas de scripts/{scriptId}', () => {
         title: 'T',
         ownerUid: 'owner-1',
         collaborators: [],
+      }),
+    );
+  });
+
+  it('un usuario no puede crear un guion agregando a otro como collaborator', async () => {
+    const db = env.authenticatedContext('owner-1').firestore();
+    await assertFails(
+      setDoc(doc(db, 'scripts', 's2b'), {
+        title: 'T',
+        ownerUid: 'owner-1',
+        collaborators: ['victima'],
       }),
     );
   });

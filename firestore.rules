@@ -1,0 +1,49 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Perfil del usuario: solo lo lee y escribe su propio dueño.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Guiones: accesibles por el dueño y por los uids en `collaborators`.
+    match /scripts/{scriptId} {
+      function canAccess(data) {
+        return signedIn() &&
+          (data.ownerUid == request.auth.uid ||
+           request.auth.uid in data.get('collaborators', []));
+      }
+
+      // `resource == null` cuando se lee un documento inexistente: lo dejamos
+      // pasar (a usuarios autenticados) para que el cliente reciba "no existe"
+      // en vez de PermissionDenied. Un cliente sin autenticar sigue denegado.
+      allow read: if (resource == null && signedIn()) ||
+                     (resource != null && canAccess(resource.data));
+      // Al crear, `collaborators` debe ir vacío: un usuario no puede otorgar
+      // acceso a otro sin su consentimiento.
+      allow create: if signedIn() &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.collaborators == [];
+      // Solo el dueño puede modificar la lista de `collaborators`.
+      allow update: if canAccess(resource.data) &&
+        request.resource.data.ownerUid == resource.data.ownerUid &&
+        (request.resource.data.collaborators == resource.data.collaborators ||
+         resource.data.ownerUid == request.auth.uid);
+      allow delete: if signedIn() &&
+        resource.data.ownerUid == request.auth.uid;
+
+      // Líneas del guion: mismo permiso que el guion padre (un solo `get`).
+      match /lines/{lineId} {
+        allow read, write: if canAccess(
+          get(/databases/$(database)/documents/scripts/$(scriptId)).data
+        );
+      }
+    }
+  }
+}
