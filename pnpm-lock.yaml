@@ -63,6 +63,9 @@ importers:
       '@dialog/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@dialog/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.76.0(react@19.1.0))
