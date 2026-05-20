@@ -5,5 +5,9 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
     testTimeout: 15000,
+    // Los emuladores de Firebase son compartidos: si vitest corre archivos de
+    // test en paralelo, el `clearFirestore()` de un archivo pisa los datos
+    // que otro acaba de escribir.
+    fileParallelism: false,
   },
 });

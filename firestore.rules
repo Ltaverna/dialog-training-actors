@@ -20,7 +20,11 @@ service cloud.firestore {
            request.auth.uid in data.get('collaborators', []));
       }
 
-      allow read: if canAccess(resource.data);
+      // `resource == null` cuando se lee un documento inexistente: lo dejamos
+      // pasar (a usuarios autenticados) para que el cliente reciba "no existe"
+      // en vez de PermissionDenied. Un cliente sin autenticar sigue denegado.
+      allow read: if (resource == null && signedIn()) ||
+                     (resource != null && canAccess(resource.data));
       // Al crear, `collaborators` debe ir vacío: un usuario no puede otorgar
       // acceso a otro sin su consentimiento.
       allow create: if signedIn() &&
