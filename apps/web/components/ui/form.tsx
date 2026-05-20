@@ -111,12 +111,12 @@ function FormControl({ children, ...props }: React.ComponentProps<"div">) {
   >
 
   return React.cloneElement(child, {
+    ...props,
     id: formItemId,
     "aria-describedby": !error
       ? formDescriptionId
       : `${formDescriptionId} ${formMessageId}`,
     "aria-invalid": !!error,
-    ...props,
   } as React.HTMLAttributes<HTMLElement>)
 }
 
