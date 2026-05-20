@@ -31,3 +31,5 @@ export {
   deleteScript,
 } from './scripts/scriptRepository';
 export type { ScriptSummary } from './scripts/scriptRepository';
+
+export { FirebaseProvider, useFirebase } from './react/FirebaseProvider';
