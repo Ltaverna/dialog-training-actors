@@ -33,3 +33,7 @@ export {
 export type { ScriptSummary } from './scripts/scriptRepository';
 
 export { FirebaseProvider, useFirebase } from './react/FirebaseProvider';
+
+export { AuthProvider } from './react/AuthProvider';
+export type { AuthStatus, AuthContextValue } from './react/AuthProvider';
+export { useAuth } from './react/useAuth';
