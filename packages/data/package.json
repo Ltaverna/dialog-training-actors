@@ -11,12 +11,22 @@
     "test:watch": "firebase emulators:exec --only auth,firestore --project demo-dialog-test 'vitest'",
     "typecheck": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
   "dependencies": {
     "@dialog/core": "workspace:*",
     "firebase": "^11.3.0"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.1.0",
+    "jsdom": "^25.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.8"
   }
