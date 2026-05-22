@@ -68,4 +68,23 @@ describe('ScriptPage', () => {
     expect(screen.getByText(/iniciá sesión/i)).toBeInTheDocument();
     expect(mockedGetScript).not.toHaveBeenCalled();
   });
+
+  it('muestra un mensaje de error si getScript rechaza', async () => {
+    mockedUseAuth.mockReturnValue(signedInAuth());
+    mockedGetScript.mockRejectedValue(new Error('boom'));
+    render(<ScriptPage />);
+    expect(
+      await screen.findByText(/no pudimos cargar el guion/i),
+    ).toBeInTheDocument();
+  });
+
+  it('no llama getScript mientras la sesión está cargando', () => {
+    mockedUseAuth.mockReturnValue({
+      ...signedInAuth(),
+      status: 'loading',
+      user: null,
+    });
+    render(<ScriptPage />);
+    expect(mockedGetScript).not.toHaveBeenCalled();
+  });
 });
