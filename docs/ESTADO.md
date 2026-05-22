@@ -1,6 +1,6 @@
 # Estado del proyecto — dialog-training-actors
 
-> Documento de continuidad. Última actualización: **2026-05-21**.
+> Documento de continuidad. Última actualización: **2026-05-22**.
 > Resume qué está hecho, cómo correrlo y qué sigue. Para retomar el trabajo,
 > leer este archivo primero.
 
@@ -21,9 +21,11 @@ apps en las tiendas. El despliegue es una fase posterior.
 Lo que SÍ se puede ver, **corriendo localmente**:
 
 - **Web** — `pnpm --filter @dialog/web dev` y abrir <http://localhost:3000>.
-  Ahora muestra la **pantalla de autenticación real** (login / registro /
-  reseteo + botones de Google/Apple). Con sesión iniciada muestra un saludo
-  placeholder ("Hola, {email}") — la lista de guiones llega en el próximo plan.
+  Muestra la **pantalla de autenticación real** (login / registro /
+  reseteo + botones de Google/Apple). Con sesión iniciada muestra **"Mis
+  guiones"**: lista en vivo desde Firestore, botón "+ Nuevo guion" (crea un
+  guion de práctica inicial), abrir cada guion en el **viewer read-only** y
+  borrarlo. También el aviso de email sin verificar y "Cerrar sesión".
   - Para que el login funcione necesitás un `.env.local` (copiá
     `apps/web/.env.local.example`) y, para no depender de la consola, podés
     correr contra emuladores poniendo `NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true`
@@ -43,9 +45,11 @@ Lo que SÍ se puede ver, **corriendo localmente**:
 | Repositorios Firestore + reglas | ✅ | `userRepository`, `scriptRepository`, reglas de seguridad, tests contra emuladores |
 | Setup web (estilos + capa React) | ✅ | Tailwind + shadcn/ui; `FirebaseProvider`/`AuthProvider`/`useAuth`/`useScripts` |
 | UI de auth web (plan 2 de 3) | ✅ | Pantalla de login/registro/reseteo + Google/Apple |
+| UI "Mis guiones" + viewer (plan 3 de 3) | ✅ | Lista en vivo (crear/abrir/borrar) + viewer read-only; home cableada por status |
 
-**89 tests** verdes en el monorepo. Todo está en `main` y pusheado a
-GitHub (`github.com/Ltaverna/dialog-training-actors`).
+**104 tests** verdes en el monorepo (22 core + 35 data + 45 web + 2 mobile).
+Todo está en `main` y pusheado a GitHub
+(`github.com/Ltaverna/dialog-training-actors`).
 
 ## 4. Estructura del repo
 
@@ -96,18 +100,23 @@ pnpm --filter @dialog/mobile start  # móvil con Expo
 - **Plan de Firebase:** Spark (gratuito). Cloud Functions y otras features
   necesitarán pasar a Blaze más adelante.
 
-## 7. Próximo paso: plan 3 de la UI web (Mis guiones + viewer)
+## 7. Próximo paso
 
-El siguiente sub-proyecto: la pantalla **"Mis guiones"** (lista en vivo desde
-Firestore con `useScripts`, crear/abrir/borrar) y el **viewer read-only** de un
-guion, que se mostrarán cuando `status === 'signedIn'` reemplazando el saludo
-placeholder de la home.
+La **UI web de auth + guiones está completa** (las 3 fases del spec
+`2026-05-20-web-auth-ui-design.md`). Los candidatos para la próxima fase, a
+elegir cuando se retome:
 
-**Para retomar:** pedir "escribamos el plan 3 de la UI web" — se escribe el
-plan (el spec ya está en `docs/superpowers/specs/2026-05-20-web-auth-ui-design.md`)
-y se ejecuta con el flujo de subagentes.
+- **Editor de guiones (web):** crear/editar escenas, personajes y líneas (hoy
+  solo se ve el guion de práctica inicial y el viewer es read-only). Es lo que
+  desbloquea cargar guiones reales.
+- **UI de auth + guiones en móvil:** replicar login + "Mis guiones" + viewer en
+  `apps/mobile` (hoy sigue en la pantalla de demostración).
+- **Motor de ensayo / TTS:** empezar con la mecánica central del producto
+  (teleprompter + voces). Requiere Cloud Functions (pasar Firebase a Blaze) y
+  las API keys de TTS/STT.
 
-Después de eso: la UI de auth + guiones en **móvil**.
+**Para retomar:** elegir una de las tres y arrancar el ciclo
+brainstorm → spec → plan → subagentes.
 
 ## 8. Acciones pendientes del usuario
 
@@ -147,4 +156,4 @@ Cada fase tiene su spec y su plan en `docs/superpowers/`. Los planes ejecutados:
 4. `2026-05-18-firestore-repositories-and-rules.md` — ✅
 5. `2026-05-20-web-react-layer-and-styling-setup.md` — ✅
 6. `2026-05-21-web-auth-screen.md` — ✅
-7. UI web "Mis guiones" + viewer (plan 3) — pendiente de escribir.
+7. `2026-05-21-web-my-scripts-and-viewer.md` — ✅
