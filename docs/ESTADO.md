@@ -34,6 +34,50 @@ Lo que SÍ se puede ver, **corriendo localmente**:
   Sigue mostrando la pantalla de demostración (la UI real de móvil es una fase
   posterior).
 
+## 2-bis. Pendientes para la próxima sesión (2026-05-23)
+
+> Surgieron al probar por primera vez el login real contra el proyecto Firebase
+> (no emulador). El login con **Google ya quedó habilitado** en la consola
+> (cuenta `taverna.lucas@gmail.com`) y **se logró entrar**. Quedaron dos temas:
+
+1. **Verificar estilos (rápido).** Hoy la web se veía **sin formato**: la causa
+   fue un `dev server` viejo/cacheado, no el código. Un server fresco sirve el
+   CSS correcto (52 KB con todas las utilidades de Tailwind). Para confirmar:
+   ```bash
+   pnpm --filter @dialog/web dev
+   ```
+   abrir <http://localhost:3000> y hacer **hard refresh (Cmd+Shift+R)**. Si
+   alguna vez se ve sin estilos: matar el dev server, `rm -rf apps/web/.next/cache`,
+   relevantarlo y hard refresh.
+
+2. **Arreglar Firestore "client is offline" (bloquea "Mis guiones").** En la
+   consola del navegador apareció:
+   `[AuthProvider] ensureUserProfile falló FirebaseError: Failed to get document because the client is offline.`
+   Firestore no logra conectarse, así que la lista de guiones no carga. A hacer:
+   - **Crear/confirmar la base de datos Firestore** en la consola del proyecto
+     `dialog-training-actors` (Firestore Database → Crear base de datos, modo
+     producción, región — p. ej. `southamerica-east1` o `nam5`).
+     <https://console.firebase.google.com/project/dialog-training-actors/firestore>
+   - **Desplegar reglas e índices a la nube** (hoy solo existen localmente en
+     `firestore.rules` / `firestore.indexes.json`):
+     ```bash
+     firebase login          # con taverna.lucas@gmail.com, si hace falta
+     firebase deploy --only firestore:rules,firestore:indexes
+     ```
+   - Reintentar: login con Google → debería crear `users/{uid}` sin el error
+     "offline".
+
+3. **Probar el flujo completo end-to-end** (proyecto real, no emulador): login
+   Google → "+ Nuevo guion" → abrir en el viewer → borrar. Confirmar que la
+   lista carga en vivo.
+
+4. **(Postergable) Apple Sign-In.** Requiere un Service ID + key privada en la
+   cuenta Apple Developer y cargarlos en Firebase. Recomendación: dejarlo para
+   más adelante; validar todo con Google primero.
+
+5. **Elegir la próxima fase de producto** (ver sección 7): editor de guiones
+   web / UI en móvil / motor de ensayo + TTS.
+
 ## 3. Fases completadas
 
 | Fase | Estado | Resultado |
@@ -120,10 +164,11 @@ brainstorm → spec → plan → subagentes.
 
 ## 8. Acciones pendientes del usuario
 
-- **Antes de probar el login REAL (no emulador):** habilitar los proveedores
-  **Email/Password, Google y Apple** en la consola de Firebase →
-  Authentication. Apple además necesita un Service ID y una key en la cuenta
-  Apple Developer. (Mientras tanto, dev/test funciona contra emuladores.)
+- **Login real (no emulador):** **Google ya habilitado** (2026-05-22) y el
+  login funciona. Falta habilitar **Apple** (Service ID + key en Apple
+  Developer) — postergado. **Email/Password**: habilitar si se quiere usar.
+  Pendiente de fondo: crear la base Firestore y desplegar reglas (ver
+  sección 2-bis).
 - **Para el despliegue (fase futura):** está disponible el dominio
   `neuralcore.dev` para subdominios; y ya hay licencias de Google Play y Apple
   Developer compradas.
