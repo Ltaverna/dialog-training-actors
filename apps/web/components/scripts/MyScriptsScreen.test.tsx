@@ -62,7 +62,7 @@ describe('MyScriptsScreen', () => {
     );
     render(<MyScriptsScreen />);
     expect(screen.getByText('Hamlet')).toBeInTheDocument();
-    const open = screen.getByRole('link', { name: 'Abrir' });
+    const open = screen.getByRole('link', { name: 'Abrir Hamlet' });
     expect(open).toHaveAttribute('href', '/scripts/s1');
   });
 
@@ -113,6 +113,17 @@ describe('MyScriptsScreen', () => {
     render(<MyScriptsScreen />);
     await userEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
     await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+  });
+
+  it('muestra un mensaje de error si falla la carga de guiones', () => {
+    mockedUseAuth.mockReturnValue(mockAuth());
+    mockedUseScripts.mockReturnValue(
+      mockScripts({ status: 'error', error: new Error('boom') }),
+    );
+    render(<MyScriptsScreen />);
+    expect(
+      screen.getByText(/no se pudieron cargar los guiones/i),
+    ).toBeInTheDocument();
   });
 
   it('muestra el banner de email no verificado solo si corresponde', () => {

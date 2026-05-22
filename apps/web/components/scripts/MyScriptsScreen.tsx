@@ -62,6 +62,10 @@ export function MyScriptsScreen() {
 
       {status === 'loading' ? (
         <p className="text-muted-foreground">Cargando guiones…</p>
+      ) : status === 'error' ? (
+        <p role="alert" className="text-destructive text-sm">
+          No se pudieron cargar los guiones. Probá recargar la página.
+        </p>
       ) : scripts.length === 0 ? (
         <p className="text-muted-foreground">
           Todavía no tenés guiones. Creá el primero con &quot;+ Nuevo guion&quot;.
@@ -75,7 +79,11 @@ export function MyScriptsScreen() {
             >
               <span className="font-medium">{s.title}</span>
               <span className="flex items-center gap-3">
-                <Link href={`/scripts/${s.id}`} className="text-sm underline">
+                <Link
+                  href={`/scripts/${s.id}`}
+                  className="text-sm underline"
+                  aria-label={`Abrir ${s.title}`}
+                >
                   Abrir
                 </Link>
                 <Button
