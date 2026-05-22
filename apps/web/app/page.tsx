@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@dialog/data';
+import { AuthScreen } from '@/components/auth/AuthScreen';
 
 export default function Home() {
   const { status, user, signOut } = useAuth();
@@ -14,16 +15,7 @@ export default function Home() {
   }
 
   if (status === 'signedOut') {
-    return (
-      <main className="flex min-h-screen items-center justify-center p-8">
-        <div className="max-w-md text-center">
-          <h1 className="text-2xl font-bold">Iniciá sesión</h1>
-          <p className="mt-4 text-muted-foreground">
-            La pantalla de login llega en el próximo plan.
-          </p>
-        </div>
-      </main>
-    );
+    return <AuthScreen />;
   }
 
   return (
