@@ -2,9 +2,10 @@
 
 import { useAuth } from '@dialog/data';
 import { AuthScreen } from '@/components/auth/AuthScreen';
+import { MyScriptsScreen } from '@/components/scripts/MyScriptsScreen';
 
 export default function Home() {
-  const { status, user, signOut } = useAuth();
+  const { status } = useAuth();
 
   if (status === 'loading') {
     return (
@@ -18,19 +19,5 @@ export default function Home() {
     return <AuthScreen />;
   }
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-bold">Hola, {user?.email}</h1>
-      <p className="text-muted-foreground">
-        Acá va la lista de tus guiones, próximamente.
-      </p>
-      <button
-        type="button"
-        onClick={() => void signOut()}
-        className="text-sm underline"
-      >
-        Cerrar sesión
-      </button>
-    </main>
-  );
+  return <MyScriptsScreen />;
 }
